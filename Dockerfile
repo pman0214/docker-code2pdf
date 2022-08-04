@@ -24,7 +24,7 @@ FROM surnet/alpine-wkhtmltopdf:3.15.0-0.12.6-small
 COPY files/ /tmp/files/
 RUN set -x && \
     apk update && \
-    apk add --no-cache vim poppler-utils && \
+    apk add --no-cache vim && \
     apk add --no-cache --virtual .fetch-deps curl && \
     mkdir /tmp/colorscheme && \
     curl -L https://github.com/yasukotelin/shirotelin/archive/refs/tags/v2.16.0.tar.gz | \
