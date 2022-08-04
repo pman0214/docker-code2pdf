@@ -1,0 +1,65 @@
+#!/bin/sh
+
+# Copyright (c) 2022, Shigemi ISHIDA
+# 
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+# 
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+TMPDIR=/tmp/__code2pdf
+if [ ! -d ${TMPDIR} ]; then
+  mkdir ${TMPDIR}
+fi
+
+echo $*
+
+# handle options
+OUTDIR=./
+while getopts :o: OPT; do
+  case $OPT in
+    o)
+      OUTDIR=${OPTARG}
+      ;;
+    *)
+      echo "Invalid option ${OPTARG}"
+      exit 1;
+  esac
+done
+shift `expr "${OPTIND}" - 1`
+infiles=$*
+
+echo $infiles
+
+for infile in ${infiles}; do
+  vim ${infile} \
+    -c "TOhtml | w ${TMPDIR}/${infile}.html | qa!" 2>&1 > /dev/tty
+  wkhtmltopdf --page-size A4 \
+    -O Portrait \
+    --header-right "${infile}" \
+    --footer-right "[page]/[topage]" \
+    --no-background \
+    --margin-top 10 \
+    --margin-right 10 \
+    --margin-left 10 \
+    --margin-bottom 10 \
+    file://${TMPDIR}/${infile}.html ${TMPDIR}/${infile}.pdf 2> /dev/null
+done
+
+cp ${TMPDIR}/*.pdf ${OUTDIR}
+
+rm -rf ${TMPDIR}
