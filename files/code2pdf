@@ -30,10 +30,14 @@ echo $*
 
 # handle options
 OUTDIR=./
-while getopts :o: OPT; do
+FONTSIZE=20
+while getopts :o:s: OPT; do
   case $OPT in
     o)
       OUTDIR=${OPTARG}
+      ;;
+    s)
+      FONTSIZE=${OPTARG}
       ;;
     *)
       echo "Invalid option ${OPTARG}"
@@ -46,8 +50,14 @@ infiles=$*
 echo $infiles
 
 for infile in ${infiles}; do
-  vim ${infile} \
-    -c "TOhtml | w ${TMPDIR}/${infile}.html | qa!" 2>&1 > /dev/tty
+  highlight -O html \
+    -l -t 4 \
+    --inline-css \
+    --font-size=${FONTSIZE} \
+    --font="Cica" \
+    ${infile} \
+    | sed -e 's/<meta charset="ISO-8859-1"/<meta charset="UTF-8"/' \
+    > ${TMPDIR}/${infile}.html
   wkhtmltopdf --page-size A4 \
     -O Portrait \
     --header-right "${infile}" \

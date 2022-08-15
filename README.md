@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> Code to PDF converter using vim + wkhtmltopdf
+> Code to PDF converter using highlight + wkhtmltopdf
 
 ## Table of Contents
 - [pman0214/code2pdf](#pman0214code2pdf)
@@ -16,11 +16,10 @@
 
 ## Overview
 
-Convert source codes to PDF files with vim + wkhtmltopdf
-- Use vim to syntax highlighting with the [shirotelin](https://github.com/yasukotelin/shirotelin) colorscheme.
+Convert source codes to PDF files with highlight + wkhtmltopdf
 - Use [Cica](https://github.com/miiton/Cica) font.
 
-This docker image is inspired by [ソースコードをPDF化する（2022年版, Vimユーザ向け）](https://qiita.com/1007/items/2cdaae01e7cb4107fd4b) (Japanese page) and is based on [docker-wkhtmltopdf](https://github.com/Surnet/docker-wkhtmltopdf).
+This docker image is based on [docker-wkhtmltopdf](https://github.com/Surnet/docker-wkhtmltopdf).
 
 ## Install
 
@@ -31,16 +30,21 @@ docker pull pman0214/code2pdf
 ## Simple Usage
 
 Default `WORKDIR` is `/app`.
-Note that `-t` option is **MANDATORY** to use vim.
 
 ```bash
-docker run -t --rm -v $PWD:/app pman0214/code2pdf *.java
+docker run --rm -v $PWD:/app pman0214/code2pdf code2pdf *.java
+```
+
+You cannot omit `code2pdf` command after docker image name; you can run any command inside the docker container.
+
+```bash
+docker run --rm -v $PWD:/app pman0214/code2pdf sh -c 'cd /app; for i in $(ls); do cd /app/$i; code2pdf *.java; done'
 ```
 
 You can specify output directory with the `-o` option. But remember, path have to be inside a docker container.
 ```bash
 mkdir out
-docker run -t --rm -v $PWD:/app -w /app/src pman0214/code2pdf -o ../out/ *.java
+docker run -t --rm -v $PWD:/app -w /app/src pman0214/code2pdf code2pdf -o ../out/ *.java
 ```
 
 ## Building
