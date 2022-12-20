@@ -46,4 +46,5 @@ RUN set -x && \
     mkdir /var/cache/apk
 
 WORKDIR /app
-ENTRYPOINT ["/bin/code2pdf"]
+ENTRYPOINT []
+CMD code2pdf *
