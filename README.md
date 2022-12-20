@@ -32,15 +32,22 @@ docker pull pman0214/code2pdf
 
 Default `WORKDIR` is `/app`.
 Note that `-t` option is **MANDATORY** to use vim.
+Default operation is convert all the files in the current directory.
 
 ```bash
-docker run -t --rm -v $PWD:/app pman0214/code2pdf *.java
+docker run -t --rm -v $PWD:/app pman0214/code2pdf
+```
+
+You can explicitly call code2pdf command.
+```bash
+docker run -t --rm -v $PWD:/app pman0214/code2pdf code2pdf *.java
 ```
 
 You can specify output directory with the `-o` option. But remember, path have to be inside a docker container.
+
 ```bash
 mkdir out
-docker run -t --rm -v $PWD:/app -w /app/src pman0214/code2pdf -o ../out/ *.java
+docker run -t --rm -v $PWD:/app -w /app/src pman0214/code2pdf code2pdf -o ../out/ *.java
 ```
 
 ## Building

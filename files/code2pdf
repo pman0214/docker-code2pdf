@@ -46,20 +46,23 @@ infiles=$*
 echo $infiles
 
 for infile in ${infiles}; do
+  target_dir=$(dirname ${infile})
+  base=$(basename ${infile})
+  mkdir -p ${TMPDIR}/${target_dir}
   vim ${infile} \
-    -c "TOhtml | w ${TMPDIR}/${infile}.html | qa!" 2>&1 > /dev/tty
+    -c "TOhtml | w ${TMPDIR}/${target_dir}/${base}.html | qa!" 2>&1 > /dev/tty
   wkhtmltopdf --page-size A4 \
     -O Portrait \
-    --header-right "${infile}" \
+    --header-right "${target_dir}/${base}" \
     --footer-right "[page]/[topage]" \
     --no-background \
     --margin-top 10 \
     --margin-right 10 \
     --margin-left 10 \
     --margin-bottom 10 \
-    file://${TMPDIR}/${infile}.html ${TMPDIR}/${infile}.pdf 2> /dev/null
+    file://${TMPDIR}/${target_dir}/${base}.html ${TMPDIR}/${target_dir}/${base}.pdf 2> /dev/null
+    rm -f ${TMPDIR}/${target_dir}/${base}.html
 done
 
-cp ${TMPDIR}/*.pdf ${OUTDIR}
-
+cp -r ${TMPDIR}/* ${OUTDIR}/
 rm -rf ${TMPDIR}
